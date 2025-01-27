@@ -6,7 +6,6 @@ import com.example.accountservice.dto.AccountDto;
 import com.example.accountservice.dto.AccountFilterDto;
 import com.example.accountservice.entity.Account;
 import com.example.accountservice.entity.AccountStatus;
-import com.example.accountservice.entity.User;
 import com.example.accountservice.exception.NotFoundException;
 import com.example.accountservice.mapper.AccountMapper;
 import com.example.accountservice.repository.AccountRepository;
@@ -15,6 +14,8 @@ import com.example.accountservice.specification.AccountSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,17 +38,27 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     public AccountDto createAccount(AccountDto accountDto) {
+
         userServiceClient.findUserById(accountDto.getUserId());
         Account account = Account
                 .builder()
                 .status(accountDto.getStatus())
-                .user(User
-                        .builder()
-                        .id(accountDto.getUserId())
-                        .build())
+                .userId(accountDto.getUserId())
                 .build();
         return accountMapper.toAccountDto(accountRepository.save(account));
     }
+
+    @Transactional
+    public void createAccount(Long userId) {
+        userServiceClient.findUserById(userId);
+        Account account = Account
+                .builder()
+                .status(AccountStatus.OPENED)
+                .userId(userId)
+                .build();
+        accountRepository.save(account);
+    }
+
 
     @Override
     @Transactional
@@ -64,6 +75,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAccount(Long id) {
         accountRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllByUserId(Long userId) {
+        accountRepository.deleteAllByUserId(userId);
     }
 
     @Transactional(readOnly = true)

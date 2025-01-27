@@ -19,6 +19,7 @@ public interface AccountService {
     AccountDto createAccount(AccountDto accountDto);
     AccountDto closeAccount(Long id);
     void deleteAccount(Long id);
+    void deleteAllByUserId(Long userId);
     Page<AccountDto> findAll(AccountFilterDto accountFilterDto, Pageable pageable);
-
+    void createAccount(Long userId);
 }

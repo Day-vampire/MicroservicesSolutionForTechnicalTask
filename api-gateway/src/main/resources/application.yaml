@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: account-service-route
+            uri: ${SERVICE_ACCOUNT_URL:http://localhost:8081/api/account-service}
+            predicates:
+              - Path=/api/account-service/**
+          - id: user-service-route
+            uri: ${SERVICE_USER_URL:http://localhost:8082/api/user-service}
+            predicates:
+              - Path=/api/user-service/**
+          - id: auth-service-route
+            uri: ${SERVICE_AUTH_URL:http://localhost:8083/api/auth-service}
+            predicates:
+                - Path=/api/auth-service/**

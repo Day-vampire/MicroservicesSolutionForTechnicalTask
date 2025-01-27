@@ -2,7 +2,6 @@ package com.example.accountservice.specification;
 
 import com.example.accountservice.dto.AccountFilterDto;
 import com.example.accountservice.entity.Account;
-import com.example.accountservice.entity.User;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,7 @@ public class AccountSpecificationBuilder {
                 return criteriaBuilder.conjunction();
             }
             if(accountFilterDto.getUserId()!=null){
-                predicates.add(criteriaBuilder.equal(root.<User>get("user").get("id"), accountFilterDto.getUserId()));
+                predicates.add(criteriaBuilder.equal(root.get("userId"), accountFilterDto.getUserId()));
             }
             if(accountFilterDto.getStatus()!=null){
                 predicates.add(criteriaBuilder.equal(root.get("status"), accountFilterDto.getStatus()));

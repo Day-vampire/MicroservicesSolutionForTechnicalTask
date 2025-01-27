@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpecificationExecutor<Account> {
     Optional<Account> findById(Long id);
-
+    void deleteAllByUserId(Long id);
 }

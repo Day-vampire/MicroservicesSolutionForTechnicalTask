@@ -1,5 +1,6 @@
 package com.example.userservice.service.impl;
 
+import com.example.userservice.config.Producer;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.entity.User;
 import com.example.userservice.exception.AlreadyExistsException;
@@ -19,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final Producer producer;
 
     @Override
     @Transactional
@@ -34,13 +36,16 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByFio(userLastName, userFirstName, userMiddleName)) {throw new AlreadyExistsException("This user already exists");}
 
         User user = userMapper.toUser(userDto);
-        return userMapper.toUserDto(userRepository.save(user));
+        user = userRepository.save(user);
+        producer.sendCreateUserId(user.getId());
+        return userMapper.toUserDto(user);
     }
 
     @Override
     @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+        producer.sendDeleteUserId(id);
     }
 
     @Override
